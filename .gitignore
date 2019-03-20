@@ -10,3 +10,30 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Encoding test files and tmp file
+encoding/csv/.DS_Store
+encoding/csv/001-csv-read/Export_parafile_201707251216_xN.csv
+encoding/csv/002-csv-handle/002-csv-handle
+encoding/csv/002-csv-handle/Export_parafile_201707251216_xN.csv
+encoding/csv/003-csv-read-line/.DS_Store
+encoding/csv/003-csv-read-line/output.csv
+encoding/csv/003-csv-read-line/para.csv
+encoding/csv/003-csv-read-line/result
+encoding/csv/003-csv-read-line/result1
+encoding/csv/003-csv-read-line/result2
+encoding/csv/004-csv-line-sum/.DS_Store
+encoding/csv/004-csv-line-sum/para.csv
+encoding/csv/004-csv-line-sum/ret
+encoding/csv/005-csv-line-head-parse/keys
+encoding/csv/005-csv-line-head-parse/out
+encoding/csv/005-csv-line-head-parse/para.csv
+encoding/csv/006-csv-write-file/output.csv
+encoding/csv/006-csv-write-file/result.csv
+encoding/csv/007-csv-read-write/.DS_Store
+encoding/csv/007-csv-read-write/input.csv
+encoding/csv/007-csv-read-write/output.csv
+encoding/csv/007-csv-read-write/para-input.csv
+encoding/csv/007-csv-read-write/para-output.csv
+encoding/csv/008-csv-colum-parse/008-csv-colum-parse
+encoding/csv/008-csv-colum-parse/para-input.csv
