@@ -37,3 +37,36 @@ encoding/csv/007-csv-read-write/para-input.csv
 encoding/csv/007-csv-read-write/para-output.csv
 encoding/csv/008-csv-colum-parse/008-csv-colum-parse
 encoding/csv/008-csv-colum-parse/para-input.csv
+
+# File test files
+file/001-read-etc-hosts/hosts
+file/004-file-fragment/testfile
+file/006-file-readat/testfile
+file/007-file-readat/testfile
+file/009-file-mode/abc.txt
+file/create-empty-file/
+file/truncate-a-File/
+
+# fmt test
+fmt/001-fmt-scan/001-fmt-scan
+fmt/004-fmt-print/build.sh
+fmt/004-fmt-print/fmtprint
+
+# net test
+net/http/006-http-client-do-v1/.DS_Store
+net/http/006-http-client-do-v1/006-http-client-do-v1
+net/http/006-http-client-do-v2/.DS_Store
+net/http/006-http-client-do-v2/006-http-client-do-v2
+
+# os test
+os/exec/003-exec-cmd-script/script.sh
+os/exec/005-exec-ssh-run/005-exec-ssh-run
+os/exec/006-exec-rsync-run/.DS_Store
+os/exec/010-exec-cmd-ssh-ps/.DS_Store
+
+# regexp
+regexp/001-regexp-string-match/hosts
+regexp/002-regexp-string-match/hosts
+regexp/002-regexp-string-match/hosts.bal
+regexp/003-regexp-string-match/hosts
+regexp/003-regexp-string-match/hosts.bal
