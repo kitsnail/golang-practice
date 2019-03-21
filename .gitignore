@@ -44,6 +44,7 @@ file/004-file-fragment/testfile
 file/006-file-readat/testfile
 file/007-file-readat/testfile
 file/009-file-mode/abc.txt
+file/010-reading-file-in-chunks/file.txt
 file/create-empty-file/
 file/truncate-a-File/
 
@@ -70,3 +71,4 @@ regexp/002-regexp-string-match/hosts
 regexp/002-regexp-string-match/hosts.bal
 regexp/003-regexp-string-match/hosts
 regexp/003-regexp-string-match/hosts.bal
+
