@@ -28,6 +28,7 @@ func qsort(data []int){
 			head ++
 			i ++
 		}
+		fmt.Println(i," sort ",data)
 	}
 	qsort(data[:head])
 	qsort(data[head+1:])
