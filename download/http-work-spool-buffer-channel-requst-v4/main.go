@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"sync"
 	"time"
@@ -18,17 +20,19 @@ const (
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	var saveFile string
+	flag.StringVar(&saveFile, "s", "", "give a save to file")
+	flag.Parse()
+	if flag.NArg() < 1 {
 		log.Fatalln("Please give an URL string!")
 	}
-	url := os.Args[1]
+	url := flag.Arg(0)
 
-	if len(os.Args) < 3 {
-		log.Fatalln("Please give a save file path")
+	if saveFile == "" {
+		saveFile = path.Base(url)
 	}
-	file := os.Args[2]
 
-	dlr, err := NewDownloader(url, file)
+	dlr, err := NewDownloader(url, saveFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,8 +59,8 @@ func createRanges(totalSize int64, bs int64) (ranges []Rang) {
 }
 
 type status struct {
-	speed     int64
-	completed int64
+	completing int64
+	completed  int64
 }
 
 type Downloader struct {
@@ -122,21 +126,22 @@ func (d *Downloader) SetThreadSize(ts int) {
 }
 
 func (s *status) Speed() int64 {
-	s.speed = s.completed - s.speed
-	return s.speed
+	speed := s.completing - s.completed
+	s.completed = s.completing
+	return speed
 }
 
 func (d *Downloader) Progress() {
-	var speed int64
+	var speed string
 	for {
-		speed = d.status.Speed()
+		speed = BytesToHuman(float64(d.status.Speed())) + "/s"
 		select {
 		case <-d.finished:
-			fmt.Printf("\r⇩ %s 100%% %d/%d %d\n", d.filename, d.totalSize, d.totalSize, speed)
+			fmt.Printf("\r⇩ %s 100%% %d/%d %-15s %-13s\n", d.filename, d.totalSize, d.totalSize, speed, "[Completed]")
 			return
 		default:
 			progress := float64(d.status.completed) / float64(d.totalSize) * 100
-			fmt.Printf("\r⇩ %s %.2f%% %d/%d %d", d.filename, progress, d.status.completed, d.totalSize, speed)
+			fmt.Printf("\r⇩ %s %.2f%% %d/%d %-15s %-13s", d.filename, progress, d.status.completed, d.totalSize, speed, "[InProgess]")
 			time.Sleep(1 * time.Second)
 		}
 	}
@@ -179,6 +184,7 @@ func (d *Downloader) allocate() {
 		d.completed.Add(1)
 		go func(id int) {
 			if err := d.DownloadRange(id); err != nil {
+				d.completed.Add(1)
 				d.DownloadRange(id)
 			}
 		}(i)
@@ -222,8 +228,66 @@ func (d *Downloader) DownloadRange(id int) error {
 		}
 		offset += int64(bs)
 		wlock.Lock()
-		d.status.completed += int64(bs)
+		d.status.completing += int64(bs)
 		wlock.Unlock()
 	}
 	return nil
+}
+
+const (
+	_          = iota
+	KB float64 = 1 << (10 * iota)
+	MB
+	GB
+	TB
+	PB
+	EB
+	ZB
+	YB
+)
+
+// bytesToHuman humen readable bumber
+// num unit default Byte
+// ret unit B,KB,MB,GB,TB,PB,EB,ZB,YB
+// eg. num = 1024
+// return 1,KB
+func bytesToHuman(num float64) (ret float64, unit string) {
+	switch {
+	case num >= 0 && num < KB:
+		ret = num
+		unit = "B"
+	case num >= KB && num < MB:
+		ret = num / KB
+		unit = "KiB"
+	case num >= MB && num < GB:
+		ret = num / MB
+		unit = "MiB"
+	case num >= GB && num < TB:
+		ret = num / GB
+		unit = "GiB"
+	case num >= TB && num < PB:
+		ret = num / TB
+		unit = "TiB"
+	case num >= PB && num < EB:
+		ret = num / PB
+		unit = "PiB"
+	case num >= EB && num < ZB:
+		ret = num / EB
+		unit = "EiB"
+	case num >= ZB && num < YB:
+		ret = num / ZB
+		unit = "ZiB"
+	case num >= YB:
+		ret = num / YB
+		unit = "YiB"
+	default:
+		ret = num
+		unit = "UNKOWN"
+	}
+	return
+}
+
+func BytesToHuman(num float64) (ret string) {
+	rn, unit := bytesToHuman(num)
+	return fmt.Sprintf("%.2f%s", rn, unit)
 }
