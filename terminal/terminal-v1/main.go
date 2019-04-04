@@ -27,11 +27,13 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(state1)
+	//fmt.Println(state1.termios.Line)
 
-	state2, err := terminal.MakeRaw(ifd)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(state2)
-
+	/*
+		state2, err := terminal.MakeRaw(ifd)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(state2)
+	*/
 }
