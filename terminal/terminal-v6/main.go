@@ -12,16 +12,25 @@ import (
 
 func main() {
 	pb := NewProgressBar()
+	start(pb)
+	stop(pb)
+}
+
+func start(pb *ProgressBar) {
 	for i := 0; i < 30; i++ {
 		pb.bufSpace()
 		go func(id int) {
 			for k := 0; k < 10000; k++ {
 				pb.Printf(id, "[%d] progress bar test %d\n", id, k)
-				time.Sleep(1 * time.Second)
+				time.Sleep(time.Duration(id+1) * time.Second / 100)
 			}
 		}(i)
 	}
-	for i := 1; i < 10; i++ {
+
+}
+
+func stop(pb *ProgressBar) {
+	for i := 1; i < 30; i++ {
 		time.Sleep(1 * time.Second)
 		pb.Flush()
 	}
