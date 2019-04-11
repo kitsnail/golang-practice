@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
 const (
@@ -94,6 +93,7 @@ func readURLsFile(file string) (urls []string, err error) {
 func Download(urls []string, dir string) {
 	var wg sync.WaitGroup
 	seamch := make(chan struct{}, 5)
+
 	for i, url := range urls {
 		savefile := dir + "/" + path.Base(url)
 		wg.Add(1)
@@ -110,6 +110,7 @@ func Download(urls []string, dir string) {
 			dlr.Download()
 		}(seamch, &wg, i, url, savefile)
 	}
+
 	wg.Wait()
 }
 
@@ -204,27 +205,18 @@ func (s *status) Speed() int64 {
 	return speed
 }
 
-func (d *Downloader) Progress() {
-	//	var speed string
-	pb, err := MultiBarNew()
-	if err != nil {
-		log.Fatal(err)
-	}
-	pre := fmt.Sprintf("%s %d", path.Base(d.filename), 1)
-	pb1 := pb.MakeBar(d.totalSize, pre)
-	go pb.Listen()
-
+func (d *Downloader) ProgressRun() {
+	var speed string
+	filename := path.Base(d.filename)
 	for {
-		//speed = BytesToHuman(float64(d.status.Speed())) + "/s"
+		speed = BytesToHuman(float64(d.status.Speed())) + "/s"
 		select {
 		case <-d.finished:
-			//	fmt.Printf("\r⇩ %s 100%% %d/%d %-15s %-13s\n", d.filename, d.totalSize, d.totalSize, speed, "[Completed]")
+			fmt.Printf("\r⇩ %s 100%% %d/%d %-15s %-13s", filename, d.totalSize, d.totalSize, speed, "[Completed]")
 			return
 		default:
-			//	progress := float64(d.status.completed) / float64(d.totalSize) * 100
-			//	fmt.Printf("\r⇩ %s %.2f%% %d/%d %-15s %-13s", d.filename, progress, d.status.completed, d.totalSize, speed, "[InProgess]")
-			pb1(d.status.completing)
-			time.Sleep(1 * time.Second)
+			progress := float64(d.status.completed) / float64(d.totalSize) * 100
+			fmt.Printf("\r⇩ %s %.2f%% %d/%d %-15s %-13s", filename, progress, d.status.completed, d.totalSize, speed, "[InProgess]")
 		}
 	}
 }
@@ -251,7 +243,7 @@ func (d *Downloader) Download() {
 	go d.allocate()
 	switch {
 	case d.showProgress:
-		d.Progress()
+		d.ProgressRun()
 	default:
 		d.Stop()
 	}
