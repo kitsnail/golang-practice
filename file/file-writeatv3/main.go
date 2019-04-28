@@ -18,38 +18,43 @@ func main() {
 	fmt.Println("-----------Read-------------")
 	read(file)
 	fmt.Println("----------ReadAt--------------")
-	readat(file)
+	readat(file, 0)
+	readat(file, 100)
+	readat(file, 200)
 }
 
 func read(file string) {
 	f, err := os.Open(file)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("open:", err)
 	}
 	defer f.Close()
 
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("read:", err)
 	}
 	fmt.Println(string(b))
 }
 
-func readat(file string) {
+func readat(file string, offset int64) {
 	buf := make([]byte, 100)
 	f, err := os.Open(file)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("open:", err)
 	}
 	defer f.Close()
 
-	n, err := f.ReadAt(buf, 0)
+	n, err := f.ReadAt(buf, offset)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("readat:", err)
 	}
 	bout1 := bytes.Trim(buf, "\x00")
-	fmt.Println("read at offset 0, lenth & content:", n, bout1)
-	fmt.Println("context string length:", len(bout1))
+	if len(bout1) < n {
+		fmt.Println("data range false")
+	} else {
+		fmt.Println("data range true")
+	}
 }
 
 func fstat(file string) {
@@ -88,7 +93,7 @@ func write(file string) {
 	fmt.Println("b2 byte: ", b2)
 	fmt.Println("b2 write at ", n)
 
-	b3 := []byte("bbbbbbbbbb")
+	b3 := []byte("bbbbbbbbbb\n")
 	n, err = f.WriteAt(b3, 200)
 	if err != nil {
 		log.Fatal(err)
