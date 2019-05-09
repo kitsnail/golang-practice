@@ -15,8 +15,8 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	bs := int64(1024)
-	ranges := CreateRanges(ts, bs)
+	bs := int64(10)
+	ranges := CreateRanges(5, bs, ts)
 
 	for i, r := range ranges {
 		fmt.Println(i, r)
@@ -28,15 +28,14 @@ type Rang struct {
 	End   int64
 }
 
-func CreateRanges(totalSize int64, bs int64) (ranges []Rang) {
-	var begin int64
+func CreateRanges(begin, bs, total int64) (ranges []Rang) {
 	var end int64
 
-	for begin < totalSize {
-		end += bs
+	for begin < total {
+		end = bs + begin
 		ranges = append(ranges, Rang{begin, end})
 		begin = end
 	}
-	ranges[len(ranges)-1].End = totalSize - 1
+	ranges[len(ranges)-1].End = total - 1
 	return
 }
